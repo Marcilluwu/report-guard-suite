@@ -315,7 +315,7 @@ export const InspectionPDFPreview: React.FC<InspectionPDFPreviewProps> = ({
                 )}
                 <div className="flex-1">
                   <h1 style={{ fontSize: '16px', fontWeight: 'bold', color: '#4a7c59', marginBottom: '2px', lineHeight: '1.3' }}>
-                    Acta de Revisión, Pruebas Hidrostáticas y Recargas de Equipos Contraincendios
+                    Acta de Revisión de Entorno de Obras
                   </h1>
                 </div>
               </div>
