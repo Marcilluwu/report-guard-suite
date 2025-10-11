@@ -1,8 +1,8 @@
 /// <reference lib="webworker" />
 import { clientsClaim } from 'workbox-core';
 import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
-import { registerRoute } from 'workbox-routing';
-import { NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { registerRoute, NavigationRoute } from 'workbox-routing';
+import { NetworkFirst, StaleWhileRevalidate, CacheFirst } from 'workbox-strategies';
 import { Queue } from 'workbox-background-sync';
 
 declare const self: ServiceWorkerGlobalScope;
@@ -143,6 +143,14 @@ self.addEventListener('sync', (event) => {
 // =====================================================
 // ESTRATEGIAS DE CACHÉ PARA OTROS RECURSOS
 // =====================================================
+
+// Navegación: Servir la app desde caché cuando offline (SPA routing)
+const navigationRoute = new NavigationRoute(
+  new CacheFirst({
+    cacheName: 'navigation-cache',
+  })
+);
+registerRoute(navigationRoute);
 
 // API: Network First (priorizar datos frescos)
 registerRoute(
