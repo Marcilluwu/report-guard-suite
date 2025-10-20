@@ -101,36 +101,6 @@ export const InspectionPDFPreview: React.FC<InspectionPDFPreviewProps> = ({
     try {
       setIsGenerating(true);
 
-      // Validar datos requeridos
-      if (!data || !data.inspector?.name) {
-        toast({
-          title: 'Error',
-          description: 'Faltan datos requeridos para generar el documento',
-          variant: 'destructive'
-        });
-        return;
-      }
-
-      // Validar nombre para la firma
-      if (!signatureName.trim()) {
-        toast({
-          title: 'Error',
-          description: 'Por favor, introduzca el nombre para la firma',
-          variant: 'destructive'
-        });
-        return;
-      }
-
-      // Obtener datos de la firma
-      if (!signatureData) {
-        toast({
-          title: 'Error',
-          description: 'Por favor, firme el documento antes de generar',
-          variant: 'destructive'
-        });
-        return;
-      }
-
       const folderPrefix = selectedFolder ? `${selectedFolder}_` : '';
       const currentDate = new Date().toISOString().split('T')[0];
       const fileName = `Inspección_${folderPrefix}${currentDate}.pdf`;
@@ -171,24 +141,6 @@ export const InspectionPDFPreview: React.FC<InspectionPDFPreviewProps> = ({
   // Función para imprimir
   const handlePrint = () => {
     try {
-      if (!signatureName.trim()) {
-        toast({
-          title: 'Error',
-          description: 'Por favor, introduzca el nombre para la firma antes de imprimir',
-          variant: 'destructive'
-        });
-        return;
-      }
-      
-      if (!signatureData) {
-        toast({
-          title: 'Error',
-          description: 'Por favor, firme el documento antes de imprimir',
-          variant: 'destructive'
-        });
-        return;
-      }
-      
       window.print();
     } catch (error) {
       console.error('Error al imprimir:', error);
@@ -218,14 +170,13 @@ export const InspectionPDFPreview: React.FC<InspectionPDFPreviewProps> = ({
           <Button 
             onClick={handlePrint} 
             variant="outline"
-            disabled={!signatureName.trim()}
           >
             <Printer className="w-4 h-4 mr-2" />
             Imprimir
           </Button>
           <Button 
             onClick={generateDocument} 
-            disabled={isGenerating || !signatureName.trim()}
+            disabled={isGenerating}
             className="bg-primary hover:bg-primary/90"
           >
             <FileText className="w-4 h-4 mr-2" />
