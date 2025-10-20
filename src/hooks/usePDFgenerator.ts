@@ -27,11 +27,11 @@ export const usePDFGenerator = (): UsePDFGeneratorReturn => {
   const getHtml2CanvasConfig = (scale: number = 2) => ({
     scale,
     useCORS: true,
-    allowTaint: false,
+    allowTaint: true, // Permitir imágenes locales/blob
     backgroundColor: '#ffffff',
-    logging: false,
+    logging: true, // Activar logs para debugging
     removeContainer: true,
-    imageTimeout: 15000, // 15 segundos de timeout
+    imageTimeout: 30000, // 30 segundos de timeout para imágenes
     height: null,
     width: null,
     scrollX: 0,
@@ -65,8 +65,22 @@ export const usePDFGenerator = (): UsePDFGeneratorReturn => {
 
       setProgress(20);
 
-      // ¿Existen páginas definidas explícitamente?
+      // ✅ Esperar a que todas las imágenes estén cargadas
       const container = elementRef.current as HTMLElement;
+      const images = container.querySelectorAll('img');
+      await Promise.all(
+        Array.from(images).map((img) => {
+          if (img.complete) return Promise.resolve();
+          return new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = resolve; // Continuar incluso si una imagen falla
+            setTimeout(resolve, 5000); // Timeout de seguridad
+          });
+        })
+      );
+
+      setProgress(40);
+
       const pageNodes = container.querySelectorAll('.pdf-page');
 
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true });
